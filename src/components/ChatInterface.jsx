@@ -26,18 +26,18 @@ const ChatInterface = () => {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
-
 const handleSendMessage = async () => {
   if (!message.trim()) return;
 
-  const newMessage = {
+  const userMsg = {
     id: messages.length + 1,
     type: 'user',
     content: message,
     timestamp: new Date().toLocaleTimeString()
   };
 
-  setMessages((prev) => [...prev, newMessage]);
+  const updatedMessages = [...messages, userMsg];
+  setMessages(updatedMessages);
   setMessage('');
 
   try {
@@ -47,57 +47,27 @@ const handleSendMessage = async () => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        messages: updatedMessages.map((msg) => ({
+          role: msg.type === 'user' ? 'user' : 'assistant',
+          content: msg.content
+        })),
         model: 'openai/gpt-3.5-turbo',
-        messages: [
-          {
-            role: 'system',
-            content: `You are an API that always replies in a JSON object with two keys::
-{
-  "output_type": "text" | "code" | "profile" | "link" | "steps",
-  "content": "Your detailed answer here"
-}Reply in JSON only. Do NOT reply in plain text or markdown.`
-          },
-          ...messages.map((msg) => ({
-            role: msg.type === 'user' ? 'user' : 'assistant',
-            content: msg.content,
-          })),
-          {
-            role: 'user',
-            content: message,
-          }
-        ]
       }),
     });
 
     const data = await response.json();
 
-    let content = data.reply || 'Something went wrong.';
-    let outputType = 'text';
-
-    try {
-      const parsed = JSON.parse(content); // AI should return JSON string
-      content = parsed.content || content;
-      outputType = parsed.output_type || 'text';
-    } catch (err) {
-      console.warn('Response not JSON-parsable:', err);
-    }
-
-    const botResponse = {
-      id: messages.length + 10,
+    const botMsg = {
+      id: updatedMessages.length + 1,
       type: 'bot',
-      content: content,
-      output_type: outputType,
-      timestamp: new Date().toLocaleTimeString()
+      content: data.reply,
+      timestamp: new Date().toLocaleTimeString(),
     };
 
-    setMessages((prev) => [...prev, botResponse]);
+    setMessages((prev) => [...prev, botMsg]);
+
   } catch (error) {
-    console.error('Error:', error);
-    toast({
-      title: '❌ Server error',
-      description: 'Failed to fetch AI response. Check if backend is running.',
-      variant: 'destructive',
-    });
+    console.error("Fetch Error:", error);
   }
 };
 
