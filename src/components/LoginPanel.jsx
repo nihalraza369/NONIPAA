@@ -40,7 +40,7 @@ const LoginPanel = ({ onLogin }) => {
             <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-800 rounded-full flex items-center justify-center mx-auto mb-4 pulse-glow">
               <User className="w-8 h-8 text-white" />
             </div>
-            <h2 className="text-2xl font-bold text-white mb-2">Welcome</h2>
+            <h2 className="text-2xl font-bold text-white mb-2">Welcome NONIPaa</h2>
             <p className="text-purple-300/70 text-sm">
               {isLoginMode ? 'Sign in to your account' : 'Create a new account'}
             </p>
