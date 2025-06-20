@@ -8,14 +8,14 @@ import { toast } from '@/components/ui/use-toast';
 
 const ChatHistory = ({ onNewChat, currentChatId }) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [chatHistory] = useState([
+  const chatHistory = [
     { id: 1, title: 'AI Assistant Help', timestamp: '2 hours ago', starred: true },
     { id: 2, title: 'Creative Writing Ideas', timestamp: '1 day ago', starred: false },
     { id: 3, title: 'Code Review Session', timestamp: '2 days ago', starred: true },
     { id: 4, title: 'Marketing Strategy', timestamp: '3 days ago', starred: false },
     { id: 5, title: 'Data Analysis Help', timestamp: '1 week ago', starred: false },
     { id: 6, title: 'Project Planning', timestamp: '1 week ago', starred: true },
-  ]);
+  ];
 
   const filteredHistory = chatHistory.filter(chat =>
     chat.title.toLowerCase().includes(searchQuery.toLowerCase())
